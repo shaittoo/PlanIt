@@ -31,21 +31,20 @@ class _EditCourseModalState extends State<EditCourseModal> {
   final List<String> tagOptions = ['School', 'Work', 'Personal'];
 
   final List<Color> colorOptions = [
-    const Color(0xFFFFE082), // Yellow
-    const Color(0xFFB2FF59), // Light Green
-    const Color(0xFFFF8A65), // Coral
-    const Color(0xFF80DEEA), // Light Blue
-    const Color(0xFFCE93D8), // Purple
-    const Color(0xFFAED581), // Green
-    const Color(0xFFFFB74D), // Orange
-    const Color(0xFFF8BBD0), // Pink
-    const Color(0xFFEF5350), // Red
+    const Color(0xFFFFE082), 
+    const Color(0xFFB2FF59), 
+    const Color(0xFFFF8A65), 
+    const Color(0xFF80DEEA), 
+    const Color(0xFFCE93D8), 
+    const Color(0xFFAED581), 
+    const Color(0xFFFFB74D), 
+    const Color(0xFFF8BBD0), 
+    const Color(0xFFEF5350), 
   ];
 
   @override
   void initState() {
     super.initState();
-    // Initialize all controllers with existing course data
     _titleController = TextEditingController(text: widget.course.name);
     _courseTypeController = TextEditingController(text: widget.course.type);
     _instructorController = TextEditingController(text: widget.course.instructor);
@@ -204,8 +203,8 @@ class _EditCourseModalState extends State<EditCourseModal> {
                                 onPressed: () {
                                   final scheduleService = Provider.of<ScheduleService>(context, listen: false);
                                   scheduleService.deleteCourse(widget.scheduleId, widget.course.id);
-                                  Navigator.pop(context); // Close alert
-                                  Navigator.pop(context); // Close modal
+                                  Navigator.pop(context);
+                                  Navigator.pop(context); 
                                 },
                                 child: const Text('Delete', style: TextStyle(color: Colors.red)),
                               ),

@@ -18,33 +18,30 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
   final TextEditingController _titleController = TextEditingController();
   late final String _scheduleId;
   
-  // Time slots from 6:00 to 18:00
   final List<String> timeSlots = [
-    '06:00', '06:30',  // 6:00 AM, 6:30 AM
-    '07:00', '07:30',  // 7:00 AM, 7:30 AM
-    '08:00', '08:30',  // 8:00 AM, 8:30 AM
-    '09:00', '09:30',  // 9:00 AM, 9:30 AM
-    '10:00', '10:30',  // 10:00 AM, 10:30 AM
-    '11:00', '11:30',  // 11:00 AM, 11:30 AM
-    '12:00', '12:30',  // 12:00 PM, 12:30 PM
-    '13:00', '13:30',  // 1:00 PM, 1:30 PM
-    '14:00', '14:30',  // 2:00 PM, 2:30 PM
-    '15:00', '15:30',  // 3:00 PM, 3:30 PM
-    '16:00', '16:30',  // 4:00 PM, 4:30 PM
-    '17:00', '17:30',  // 5:00 PM, 5:30 PM
-    '18:00', '18:30',  // 6:00 PM, 6:30 PM
-    '19:00', '19:30',  // 7:00 PM, 7:30 PM
-    '20:00',           // 8:00 PM
+    '06:00', '06:30',  
+    '07:00', '07:30',  
+    '08:00', '08:30',  
+    '09:00', '09:30',  
+    '10:00', '10:30',  
+    '11:00', '11:30',  
+    '12:00', '12:30',  
+    '13:00', '13:30', 
+    '14:00', '14:30',  
+    '15:00', '15:30', 
+    '16:00', '16:30', 
+    '17:00', '17:30', 
+    '18:00', '18:30',  
+    '19:00', '19:30',  
+    '20:00',           
   ];
   
-  // Days of the week
   final List<String> days = ['M', 'T', 'W', 'Th', 'F', 'Sat'];
 
   @override
   void initState() {
     super.initState();
     _scheduleId = const Uuid().v4();
-    // Initialize the schedule in the service
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final schedule = Schedule(
         id: _scheduleId,
@@ -104,7 +101,6 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
       ),
       body: Column(
         children: [
-          // Header row with days
           Container(
             decoration: const BoxDecoration(
               border: Border(
@@ -115,21 +111,21 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
               children: [
                 SizedBox(
                   width: 60,
-                  height: 30,  // Changed from 40 to 30
+                  height: 30,  
                   child: Center(
                     child: Text(
                       'Time',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: Colors.grey[700],
-                        fontSize: 11,  // Reduced font size
+                        fontSize: 11,  
                       ),
                     ),
                   ),
                 ),
                 ...days.map((day) => Expanded(
                   child: Container(
-                    height: 30,  // Changed from 40 to 30
+                    height: 30,  
                     decoration: BoxDecoration(
                       border: Border(
                         left: BorderSide(color: Colors.grey[300]!),
@@ -141,7 +137,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.grey[700],
-                          fontSize: 11,  // Reduced font size
+                          fontSize: 11,  
                         ),
                       ),
                     ),
@@ -150,7 +146,6 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
               ],
             ),
           ),
-          // Time grid
           Expanded(
             child: SingleChildScrollView(
               child: Column(
@@ -179,7 +174,6 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     final currentHour = int.parse(timeParts[0]);
     final currentMinute = timeParts.length > 1 ? int.parse(timeParts[1]) : 0;
 
-    // Convert 24-hour format to 12-hour format for display
     String formatTimeDisplay(String time) {
       final parts = time.split(':');
       final hour = int.parse(parts[0]);
@@ -204,7 +198,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         );
 
         return Container(
-          height: 40,  // Changed from 60 to 40
+          height: 40, 
           decoration: BoxDecoration(
             border: Border(
               bottom: BorderSide(color: Colors.grey[300]!),
@@ -212,7 +206,6 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
           ),
           child: Row(
             children: [
-              // Time column
               SizedBox(
                 width: 60,
                 child: Center(
@@ -220,12 +213,11 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                     formatTimeDisplay(time),
                     style: TextStyle(
                       color: Colors.grey[700],
-                      fontSize: 11,  // Reduced font size
+                      fontSize: 11,  
                     ),
                   ),
                 ),
               ),
-              // Day columns
               ...days.map((day) {
                 final coursesAtTime = schedule.courses.where((course) {
                   final currentTimeInMinutes = (currentHour * 60) + currentMinute;
@@ -267,23 +259,23 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                               );
                             },
                             child: Container(
-                              height: 40.0 * heightInBlocks,  // Changed from 60 to 40
+                              height: 40.0 * heightInBlocks, 
                               decoration: BoxDecoration(
                                 color: course.color.withOpacity(0.8),
-                                borderRadius: BorderRadius.circular(6),  // Reduced border radius
+                                borderRadius: BorderRadius.circular(6),  
                                 border: Border.all(
                                   color: course.color,
                                   width: 1,
                                 ),
                               ),
-                              padding: const EdgeInsets.all(3),  // Reduced padding
+                              padding: const EdgeInsets.all(3),  
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     course.name,
                                     style: const TextStyle(
-                                      fontSize: 11,  // Reduced font size
+                                      fontSize: 11, 
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black87,
                                     ),
@@ -293,7 +285,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                     Text(
                                       course.type,
                                       style: const TextStyle(
-                                        fontSize: 10,  // Reduced font size
+                                        fontSize: 10, 
                                         color: Colors.black87,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -301,7 +293,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                     Text(
                                       'Prof. ${course.instructor}',
                                       style: const TextStyle(
-                                        fontSize: 10,  // Reduced font size
+                                        fontSize: 10, 
                                         color: Colors.black87,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -309,7 +301,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                     Text(
                                       course.location,
                                       style: const TextStyle(
-                                        fontSize: 10,  // Reduced font size
+                                        fontSize: 10, 
                                         color: Colors.black87,
                                       ),
                                       overflow: TextOverflow.ellipsis,
@@ -357,7 +349,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     final schedule = Schedule(
       id: _scheduleId,
       name: _titleController.text,
-      courses: [], // Courses are already saved individually
+      courses: [], 
       createdAt: DateTime.now(),
     );
     

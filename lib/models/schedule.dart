@@ -48,12 +48,10 @@ class Schedule {
     for (final course in courses) {
       if (course.id == newCourse.id) continue;
       
-      //check if courses share any weekdays
       final hasCommonDay = course.weekDays
           .any((day) => newCourse.weekDays.contains(day));
       
       if (hasCommonDay) {
-        //check time overlap
         final newStart = newCourse.startTime;
         final newEnd = newCourse.endTime;
         final existingStart = course.startTime;

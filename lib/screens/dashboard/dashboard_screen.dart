@@ -13,7 +13,6 @@ class DashboardScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Fixed header section with padding
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
@@ -45,7 +44,6 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            // Expanded blue section
             Expanded(
               child: Container(
                 width: double.infinity,
@@ -58,7 +56,6 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    // Header with Schedules and Filter
                     Padding(
                       padding: const EdgeInsets.all(24.0),
                       child: Row(
@@ -103,7 +100,6 @@ class DashboardScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                    // Schedule List
                     Expanded(
                       child: Consumer<ScheduleService>(
                         builder: (context, scheduleService, child) {

@@ -26,11 +26,9 @@ class ScheduleDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ScheduleService>(
       builder: (context, scheduleService, child) {
-        // Try to find the schedule
         final schedule = scheduleService.schedules.firstWhere(
           (s) => s.id == scheduleId,
           orElse: () {
-            // If schedule not found, navigate back and show error
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -40,12 +38,10 @@ class ScheduleDetailScreen extends StatelessWidget {
                 ),
               );
             });
-            // Return a dummy schedule to prevent build errors
             return Schedule(name: '');
           },
         );
 
-        // If we're returning to previous screen, show loading
         if (schedule.name.isEmpty) {
           return const Scaffold(
             body: Center(
@@ -61,7 +57,7 @@ class ScheduleDetailScreen extends StatelessWidget {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF7B61FF),  // Violet color
+                  foregroundColor: const Color(0xFF7B61FF),  
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
                 child: const Text(
@@ -77,7 +73,6 @@ class ScheduleDetailScreen extends StatelessWidget {
           ),
           body: Column(
             children: [
-              // Header row with days
               Container(
                 decoration: const BoxDecoration(
                   border: Border(
@@ -123,7 +118,6 @@ class ScheduleDetailScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              // Time grid
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -141,7 +135,6 @@ class ScheduleDetailScreen extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            // Time column
                             SizedBox(
                               width: 60,
                               child: Center(
@@ -154,7 +147,6 @@ class ScheduleDetailScreen extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // Day columns
                             ...days.map((day) {
                               final coursesAtTime = schedule.courses.where((course) {
                                 final currentTimeInMinutes = (currentHour * 60) + currentMinute;
