@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../screens/dashboard/dashboard_screen.dart';
+import '../screens/dashboard_screen.dart';
 
 class PlanItApp extends StatelessWidget {
   const PlanItApp({super.key});

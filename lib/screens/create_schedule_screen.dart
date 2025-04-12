@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/schedule.dart';
 import '../../services/schedule_service.dart';
-import '../../screens/create_schedule/create_course_modal.dart';
+import '../../screens/create_course_modal.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/course.dart';
-import '../../screens/create_schedule/edit_course_modal.dart';
+import '../../screens/edit_course_modal.dart';
 
 class CreateScheduleScreen extends StatefulWidget {
   const CreateScheduleScreen({super.key});

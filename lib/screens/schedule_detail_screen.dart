@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/schedule.dart';
 import '../../services/schedule_service.dart';
-import '../../screens/create_schedule/create_course_modal.dart';
+import '../../screens/create_course_modal.dart';
 
 class ScheduleDetailScreen extends StatelessWidget {
   final String scheduleId;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/schedule.dart';
 import 'package:intl/intl.dart';
-import '../schedule_detail/schedule_detail_screen.dart';
+import '../screens/schedule_detail_screen.dart';
 
 class ScheduleItem extends StatelessWidget {
   final Schedule schedule;
