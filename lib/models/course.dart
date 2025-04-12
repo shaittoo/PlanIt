@@ -1,19 +1,43 @@
+import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+part 'course.g.dart';
+
+@HiveType(typeId: 1)
 class Course {
+  @HiveField(0)
   final String id;
-  String name;
-  String type;
-  DateTime startTime;
-  DateTime endTime;
-  List<String> weekDays;
-  String location;
-  String instructor;
-  String color;
-  String scheduleId;
-  int dayIndex; 
-  int startHour;
-  int endHour; 
+  
+  @HiveField(1)
+  final String name;
+  
+  @HiveField(2)
+  final String type;
+  
+  @HiveField(3)
+  final TimeOfDay startTime;
+  
+  @HiveField(4)
+  final TimeOfDay endTime;
+  
+  @HiveField(5)
+  final List<String> weekDays;
+  
+  @HiveField(6)
+  final String location;
+  
+  @HiveField(7)
+  final String instructor;
+  
+  @HiveField(8)
+  final Color color;
+  
+  @HiveField(9)
+  final String scheduleId;
+  
+  @HiveField(10)
+  final String tag;
 
   Course({
     String? id,
@@ -26,9 +50,7 @@ class Course {
     required this.instructor,
     required this.color,
     required this.scheduleId,
-    required this.dayIndex,
-    required this.startHour,
-    required this.endHour,
+    required this.tag,
   }) : id = id ?? const Uuid().v4();
 
   Map<String, dynamic> toMap() {
@@ -36,16 +58,16 @@ class Course {
       'id': id,
       'name': name,
       'type': type,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'startTimeHour': startTime.hour,
+      'startTimeMinute': startTime.minute,
+      'endTimeHour': endTime.hour,
+      'endTimeMinute': endTime.minute,
       'weekDays': weekDays.join(','),
       'location': location,
       'instructor': instructor,
-      'color': color,
+      'color': color.value.toString(),
       'scheduleId': scheduleId,
-      'dayIndex': dayIndex,
-      'startHour': startHour,
-      'endHour': endHour,
+      'tag': tag,
     };
   }
 
@@ -54,16 +76,36 @@ class Course {
       id: map['id'],
       name: map['name'],
       type: map['type'],
-      startTime: DateTime.parse(map['startTime']),
-      endTime: DateTime.parse(map['endTime']),
-      weekDays: map['weekDays'].split(','),
+      startTime: TimeOfDay(
+        hour: map['startTimeHour'],
+        minute: map['startTimeMinute'],
+      ),
+      endTime: TimeOfDay(
+        hour: map['endTimeHour'],
+        minute: map['endTimeMinute'],
+      ),
+      weekDays: (map['weekDays'] as String).split(','),
       location: map['location'],
       instructor: map['instructor'],
-      color: map['color'],
+      color: Color(int.parse(map['color'])),
       scheduleId: map['scheduleId'],
-      dayIndex: map['dayIndex'],
-      startHour: map['startHour'],
-      endHour: map['endHour'],
+      tag: map['tag'],
     );
+  }
+
+  bool isScheduledFor(String day, TimeOfDay time) {
+    if (!weekDays.contains(day)) return false;
+    
+    int timeInMinutes = time.hour * 60 + time.minute;
+    int startInMinutes = startTime.hour * 60 + startTime.minute;
+    int endInMinutes = endTime.hour * 60 + endTime.minute;
+    
+    return timeInMinutes >= startInMinutes && timeInMinutes < endInMinutes;
+  }
+
+  int get blockHeight {
+    int startMinutes = startTime.hour * 60 + startTime.minute;
+    int endMinutes = endTime.hour * 60 + endTime.minute;
+    return ((endMinutes - startMinutes) / 30).ceil();
   }
 } 

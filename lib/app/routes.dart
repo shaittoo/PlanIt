@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../screens/dashboard/dashboard_screen.dart';
-import '../screens/create_schedule/create_schedule_screen.dart';
-import '../screens/edit_schedule/edit_schedule_screen.dart';
-import '../screens/schedule_detail/schedule_detail_screen.dart';
+import '../screens/dashboard_screen.dart';
+import '../screens/create_schedule_screen.dart';
+import '../screens/edit_schedule_screen.dart';
+import '../screens/schedule_detail_screen.dart';
 
 class Routes {
   static const dashboard = '/';
@@ -10,10 +10,21 @@ class Routes {
   static const editSchedule = '/edit-schedule';
   static const scheduleDetail = '/schedule-detail';
 
-  static final Map<String, WidgetBuilder> all = {
+  static Map<String, Widget Function(BuildContext)> get all => {
     dashboard: (context) => const DashboardScreen(),
     createSchedule: (context) => const CreateScheduleScreen(),
     editSchedule: (context) => const EditScheduleScreen(),
-    scheduleDetail: (context) => const ScheduleDetailScreen(),
   };
+
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case scheduleDetail:
+        final scheduleId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (context) => ScheduleDetailScreen(scheduleId: scheduleId),
+        );
+      default:
+        return null;
+    }
+  }
 } 

@@ -1,10 +1,21 @@
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 import 'course.dart';
 
+part 'schedule.g.dart';
+
+@HiveType(typeId: 0)
 class Schedule {
+  @HiveField(0)
   final String id;
+  
+  @HiveField(1)
   String name;
+  
+  @HiveField(2)
   List<Course> courses;
+  
+  @HiveField(3)
   DateTime createdAt;
 
   Schedule({
@@ -12,9 +23,10 @@ class Schedule {
     required this.name,
     List<Course>? courses,
     DateTime? createdAt,
-  })  : id = id ?? const Uuid().v4(),
-        courses = courses ?? [],
-        createdAt = createdAt ?? DateTime.now();
+  }) : 
+    id = id ?? const Uuid().v4(),
+    courses = courses ?? [],
+    createdAt = createdAt ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
     return {
@@ -36,12 +48,10 @@ class Schedule {
     for (final course in courses) {
       if (course.id == newCourse.id) continue;
       
-      //check if courses share any weekdays
       final hasCommonDay = course.weekDays
           .any((day) => newCourse.weekDays.contains(day));
       
       if (hasCommonDay) {
-        //check time overlap
         final newStart = newCourse.startTime;
         final newEnd = newCourse.endTime;
         final existingStart = course.startTime;
