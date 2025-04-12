@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'routes.dart';
+import '../screens/dashboard/dashboard_screen.dart';
 
 class PlanItApp extends StatelessWidget {
   const PlanItApp({super.key});
@@ -8,14 +8,11 @@ class PlanItApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'PlanIt',
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'Roboto',
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
       ),
-      initialRoute: Routes.dashboard,
-      routes: Routes.all,
-      onGenerateRoute: Routes.onGenerateRoute,
+      home: const DashboardScreen(),
     );
   }
 } 

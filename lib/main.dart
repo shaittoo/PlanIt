@@ -1,25 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:planit/services/schedule_service.dart';
-import 'package:planit/screens/dashboard/dashboard_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'services/schedule_service.dart';
+import 'app/app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   final scheduleService = ScheduleService();
-  await scheduleService.init();
+  await scheduleService.initDatabase();
 
   runApp(
     ChangeNotifierProvider(
-      create: (_) => scheduleService,
-      child: MaterialApp(
-        title: 'PlanIt',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
-        ),
-        home: const DashboardScreen(),
-      ),
+      create: (context) => scheduleService,
+      child: const PlanItApp(),
     ),
   );
 }
