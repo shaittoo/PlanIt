@@ -66,6 +66,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         ),
         title: TextField(
           controller: _titleController,
+          autofocus: true,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: 'Untitled',
@@ -79,6 +80,8 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _saveSchedule(context),
         ),
         actions: [
           Padding(
