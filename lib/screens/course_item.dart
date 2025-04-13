@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/course.dart';
 
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import '../../models/course.dart';
+
 class CourseItem extends StatelessWidget {
   final Course course;
   final VoidCallback onTap;
@@ -14,80 +18,28 @@ class CourseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = _parseColor(course.color as String);
+    final startTime = _formatTime(course.startTime as DateTime);
+    final endTime = _formatTime(course.endTime as DateTime);
+    final textStyleSecondary = TextStyle(color: Colors.grey[700]);
+
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(4),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: _parseColor(course.color),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      course.name,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Text(
-                    course.type,
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+              _buildHeader(color, course.name, course.type, textStyleSecondary),
               const SizedBox(height: 8),
-              Text(
-                '${_formatTime(course.startTime)} - ${_formatTime(course.endTime)}',
-                style: const TextStyle(
-                  fontSize: 16,
-                ),
-              ),
+              Text('$startTime - $endTime', style: const TextStyle(fontSize: 16)),
               const SizedBox(height: 4),
-              Text(
-                course.weekDays.join(', '),
-                style: TextStyle(
-                  color: Colors.grey[700],
-                ),
-              ),
+              Text(course.weekDays.join(', '), style: textStyleSecondary),
               const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text(
-                    course.location,
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  const Icon(Icons.person, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  Text(
-                    course.instructor,
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                ],
-              ),
+              _buildInfoRow(course.location, course.instructor, textStyleSecondary),
             ],
           ),
         ),
@@ -95,19 +47,51 @@ class CourseItem extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime time) {
-    return DateFormat('h:mm a').format(time);
+  Widget _buildHeader(Color color, String name, String type, TextStyle textStyle) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            name,
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Text(type, style: textStyle.copyWith(fontWeight: FontWeight.w500)),
+      ],
+    );
   }
+
+  Widget _buildInfoRow(String location, String instructor, TextStyle textStyle) {
+    return Row(
+      children: [
+        const Icon(Icons.location_on, size: 16, color: Colors.grey),
+        const SizedBox(width: 4),
+        Expanded(child: Text(location, style: textStyle)),
+        const SizedBox(width: 16),
+        const Icon(Icons.person, size: 16, color: Colors.grey),
+        const SizedBox(width: 4),
+        Expanded(child: Text(instructor, style: textStyle)),
+      ],
+    );
+  }
+
+  String _formatTime(DateTime time) => DateFormat('h:mm a').format(time);
 
   Color _parseColor(String hexColor) {
     try {
       hexColor = hexColor.replaceAll('#', '');
       if (hexColor.length == 6) {
-        hexColor = 'FF$hexColor';
+        hexColor = 'FF$hexColor'; // add full opacity
       }
       return Color(int.parse(hexColor, radix: 16));
-    } catch (e) {
+    } catch (_) {
       return Colors.blue;
     }
   }
-} 
+}

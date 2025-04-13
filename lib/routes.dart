@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../screens/dashboard_screen.dart';
-import '../screens/create_schedule_screen.dart';
-import '../screens/edit_schedule_screen.dart';
-import '../screens/schedule_detail_screen.dart';
+import 'screens/dashboard_screen.dart';
+import 'screens/create_schedule_screen.dart';
+import 'screens/edit_schedule_screen.dart';
+import 'screens/schedule_detail_screen.dart';
 
 class Routes {
   static const dashboard = '/';
