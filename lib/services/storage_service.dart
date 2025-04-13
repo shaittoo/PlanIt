@@ -7,7 +7,7 @@ import 'hive_adapters.dart';
 class StorageService {
   static late Box<Schedule> _scheduleBox;
   static late Box<Course> _courseBox;
-  static late Box _settingsBox;
+  static late Box<String> _settingsBox;
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -19,7 +19,7 @@ class StorageService {
     
     _scheduleBox = await Hive.openBox<Schedule>('schedules');
     _courseBox = await Hive.openBox<Course>('courses');
-    _settingsBox = await Hive.openBox('settings');
+    _settingsBox = await Hive.openBox<String>('settings');
   }
 
   static Future<void> saveSchedule(Schedule schedule) async {
@@ -69,5 +69,15 @@ class StorageService {
 
   static dynamic getData(String key) {
     return _settingsBox.get(key);
+  }
+
+  static const String _userNameKey = 'userName';
+  
+  static Future<void> saveUserName(String name) async {
+    await _settingsBox.put(_userNameKey, name);
+  }
+
+  static Future<String> getUserName() async {
+    return _settingsBox.get(_userNameKey) ?? 'User';
   }
 } 

@@ -65,4 +65,19 @@ class Schedule {
     }
     return false;
   }
+
+Schedule copyWith({
+  String? id,
+  String? name,
+  List<Course>? courses,
+  DateTime? createdAt,
+}) {
+  return Schedule(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    courses: courses ?? this.courses,
+    createdAt: createdAt ?? this.createdAt,
+  );
+}
+
 }

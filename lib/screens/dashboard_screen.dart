@@ -1,9 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/schedule_service.dart';
+import '../../services/storage_service.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  String userName = 'User';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final name = await StorageService.getUserName();
+    setState(() {
+      userName = name;
+    });
+  }
+
+  Future<void> _editUserName() async {
+    String? result;
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final TextEditingController controller = TextEditingController(text: userName);
+        return AlertDialog(
+          title: const Text('Edit Name'),
+          content: TextField(
+            autofocus: true,
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: 'Enter your name',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                result = controller.text.trim();
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null && result!.isNotEmpty) {
+      await StorageService.saveUserName(result!);
+      if (mounted) {
+        setState(() {
+          userName = result!;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,27 +83,40 @@ class DashboardScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
+                children: [
+                  const Text(
                     'Dashboard',
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     'Hello,',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    'User',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w500,
+                  GestureDetector(
+                    onTap: _editUserName,
+                    child: Row(
+                      children: [
+                        Text(
+                          userName,
+                          style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.edit,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
+                      ],
                     ),
                   ),
                 ],
