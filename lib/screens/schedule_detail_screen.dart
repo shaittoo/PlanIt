@@ -177,56 +177,68 @@ class ScheduleDetailScreen extends StatelessWidget {
                                       Positioned(
                                         left: 2,
                                         right: 2,
-                                        child: Container(
-                                          height: 40.0 * heightInBlocks,
-                                          decoration: BoxDecoration(
-                                            color: course.color.withOpacity(0.8),
-                                            borderRadius: BorderRadius.circular(6),
-                                            border: Border.all(
-                                              color: course.color,
-                                              width: 1,
-                                            ),
-                                          ),
-                                          padding: const EdgeInsets.all(3),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                course.name,
-                                                style: const TextStyle(
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black87,
-                                                ),
-                                                overflow: TextOverflow.ellipsis,
+                                        child: GestureDetector(
+                                          behavior: HitTestBehavior.opaque,
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => CourseModal(
+                                                scheduleId: scheduleId,
+                                                course: course,
                                               ),
-                                              if (heightInBlocks >= 2) ...[
+                                            );
+                                          },
+                                          child: Container(
+                                            height: 40.0 * heightInBlocks,
+                                            decoration: BoxDecoration(
+                                              color: course.color.withOpacity(0.8),
+                                              borderRadius: BorderRadius.circular(6),
+                                              border: Border.all(
+                                                color: course.color,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            padding: const EdgeInsets.all(3),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
                                                 Text(
-                                                  course.type,
+                                                  course.name,
                                                   style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Colors.black54,
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
                                                   ),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
-                                                Text(
-                                                  course.instructor,
-                                                  style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Colors.black54,
+                                                if (heightInBlocks >= 2) ...[
+                                                  Text(
+                                                    course.type,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.black54,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                                Text(
-                                                  course.location,
-                                                  style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Colors.black54,
+                                                  Text(
+                                                    course.instructor,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.black54,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
+                                                  Text(
+                                                    course.location,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.black54,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ],
                                               ],
-                                            ],
+                                            ),
                                           ),
                                         ),
                                       ),

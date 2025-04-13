@@ -287,14 +287,21 @@ class _CourseModalState extends State<CourseModal> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              if (isEditing) {
+                                final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+                                scheduleService.deleteCourse(widget.scheduleId, widget.course!.id);
+                              }
+                              Navigator.pop(context);
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
+                              foregroundColor: isEditing ? Colors.red : null,
                             ),
-                            child: const Text('Cancel'),
+                            child: Text(isEditing ? 'Delete' : 'Cancel'),
                           ),
                         ),
                         const SizedBox(width: 12),
