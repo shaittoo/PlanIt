@@ -365,8 +365,9 @@ import 'package:uuid/uuid.dart';
 import '../../models/schedule.dart';
 import '../../models/course.dart';
 import '../../services/schedule_service.dart';
-import '../../screens/create_course_modal.dart';
-import '../../screens/edit_course_modal.dart';
+import '../screens/modals/course_modal.dart';
+import 'package:uuid/uuid.dart';
+import '../../models/course.dart';
 
 class CreateScheduleScreen extends StatefulWidget {
   const CreateScheduleScreen({super.key});
@@ -430,12 +431,18 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         leading: BackButton(onPressed: () => Navigator.of(context).pop()),
         title: TextField(
           controller: _titleController,
+          autofocus: true,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: 'Untitled',
             hintStyle: timeTextStyle.copyWith(fontWeight: FontWeight.w500, color: Colors.grey[500]),
           ),
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.w500,
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _saveSchedule(context),
         ),
         actions: [
           TextButton(
@@ -479,10 +486,14 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (_) => CreateCourseModal(scheduleId: _scheduleId),
-        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => CourseModal(
+              scheduleId: _scheduleId,
+            ),
+          );
+        },
         child: const Icon(Icons.add),
       ),
     );
@@ -550,6 +561,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                 builder: (context) => EditCourseModal(
                                   course: course!, // safe to use `!` since it's checked
                                   scheduleId: _scheduleId,
+                                  course: course,
                                 ),
                               );
                             },

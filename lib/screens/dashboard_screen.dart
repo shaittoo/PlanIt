@@ -67,21 +67,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       'Hello,',
                       style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500),
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          userName,
-                          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.edit, size: 20, color: Colors.grey),
-                      ],
+                  ),
+                  Text(
+                    'User',
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-
             const SizedBox(height: 24),
 
             // Bottom Schedules Section
