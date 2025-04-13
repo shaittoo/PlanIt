@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 
 class CourseModal extends StatefulWidget {
   final String scheduleId;
-  final Course? course;  // null for create mode, non-null for edit mode
+  final Course? course; 
 
   const CourseModal({
     super.key,
@@ -30,7 +30,6 @@ class _CourseModalState extends State<CourseModal> {
   late Set<String> selectedDays;
   late String selectedTag;
   
-  // Move these to constants file later
   final List<String> tagOptions = ['School', 'Work', 'Personal'];
   final List<Color> colorOptions = [
     const Color(0xFFFFE082), 
@@ -51,7 +50,6 @@ class _CourseModalState extends State<CourseModal> {
   void initState() {
     super.initState();
     if (isEditing) {
-      // Edit mode - initialize with existing course data
       _titleController = TextEditingController(text: widget.course!.name);
       _courseTypeController = TextEditingController(text: widget.course!.type);
       _instructorController = TextEditingController(text: widget.course!.instructor);
