@@ -25,12 +25,46 @@ class ScheduleService extends ChangeNotifier {
   }
 
   Future<void> addCourseToSchedule(String scheduleId, Course course) async {
-    await StorageService.saveCourse(course);
-    final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
-    if (scheduleIndex != -1) {
-      schedules[scheduleIndex].courses.add(course);
-      await StorageService.saveSchedule(schedules[scheduleIndex]);
-      notifyListeners();
+    try {
+      // First save the course to storage
+      await StorageService.saveCourse(course);
+      
+      // Find the schedule
+      final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
+      if (scheduleIndex != -1) {
+        // Create a new schedule with the updated courses list
+        final currentSchedule = schedules[scheduleIndex];
+        final updatedCourses = List<Course>.from(currentSchedule.courses)..add(course);
+        
+        final updatedSchedule = Schedule(
+          id: currentSchedule.id,
+          name: currentSchedule.name,
+          courses: updatedCourses,
+        );
+        
+        // Update the schedules list
+        schedules[scheduleIndex] = updatedSchedule;
+        
+        // Save the updated schedule to storage
+        await StorageService.saveSchedule(updatedSchedule);
+        
+        // Notify listeners after all updates are complete
+        notifyListeners();
+      } else {
+        // If schedule doesn't exist, create a new one
+        final newSchedule = Schedule(
+          id: scheduleId,
+          name: 'New Schedule',
+          courses: [course],
+        );
+        
+        schedules.add(newSchedule);
+        await StorageService.saveSchedule(newSchedule);
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error adding course to schedule: $e');
+      rethrow;
     }
   }
 
@@ -60,25 +94,95 @@ class ScheduleService extends ChangeNotifier {
     }
   }
 
-  void deleteCourse(String scheduleId, String courseId) {
-    final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
-    if (scheduleIndex != -1) {
-      schedules[scheduleIndex].courses.removeWhere((c) => c.id == courseId);
-      notifyListeners();
-    }
-  }
-
-  void updateCourse(String scheduleId, Course updatedCourse) {
-    final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
-    if (scheduleIndex != -1) {
-      final courseIndex = schedules[scheduleIndex].courses
-          .indexWhere((c) => c.id == updatedCourse.id);
-      if (courseIndex != -1) {
-        schedules[scheduleIndex].courses[courseIndex] = updatedCourse;
+  Future<void> deleteCourse(String scheduleId, String courseId) async {
+    try {
+      // Find the schedule
+      final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
+      if (scheduleIndex != -1) {
+        // Create a new schedule with the updated courses list
+        final currentSchedule = schedules[scheduleIndex];
+        final updatedCourses = List<Course>.from(currentSchedule.courses)
+          ..removeWhere((c) => c.id == courseId);
+        
+        final updatedSchedule = Schedule(
+          id: currentSchedule.id,
+          name: currentSchedule.name,
+          courses: updatedCourses,
+        );
+        
+        // Update the schedules list
+        schedules[scheduleIndex] = updatedSchedule;
+        
+        // Save the updated schedule to storage
+        await StorageService.saveSchedule(updatedSchedule);
+        
+        // Notify listeners after all updates are complete
         notifyListeners();
       }
+    } catch (e) {
+      print('Error deleting course: $e');
+      rethrow;
     }
   }
 
+  Future<void> updateCourse(String scheduleId, Course updatedCourse) async {
+    try {
+      // First save the course to storage
+      await StorageService.saveCourse(updatedCourse);
+      
+      // Find the schedule
+      final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
+      if (scheduleIndex != -1) {
+        // Create a new schedule with the updated courses list
+        final currentSchedule = schedules[scheduleIndex];
+        final courseIndex = currentSchedule.courses.indexWhere((c) => c.id == updatedCourse.id);
+        
+        if (courseIndex != -1) {
+          final updatedCourses = List<Course>.from(currentSchedule.courses)
+            ..[courseIndex] = updatedCourse;
+          
+          final updatedSchedule = Schedule(
+            id: currentSchedule.id,
+            name: currentSchedule.name,
+            courses: updatedCourses,
+          );
+          
+          // Update the schedules list
+          schedules[scheduleIndex] = updatedSchedule;
+          
+          // Save the updated schedule to storage
+          await StorageService.saveSchedule(updatedSchedule);
+          
+          // Notify listeners after all updates are complete
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Error updating course: $e');
+      rethrow;
+    }
+  }
 
+  List<String> getAllTags() {
+    final Set<String> tags = {};
+    for (var schedule in schedules) {
+      for (var course in schedule.courses) {
+        if (course.tag.isNotEmpty) {
+          tags.add(course.tag);
+        }
+      }
+    }
+    return tags.toList()..sort();
+  }
+
+  List<String> getTagsForSchedule(String scheduleId) {
+    final Set<String> tags = {};
+    final schedule = schedules.firstWhere((s) => s.id == scheduleId, orElse: () => Schedule(id: '', name: '', courses: []));
+    for (var course in schedule.courses) {
+      if (course.tag.isNotEmpty) {
+        tags.add(course.tag);
+      }
+    }
+    return tags.toList()..sort();
+  }
 } 

@@ -290,20 +290,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     ),
                                                   ),
                                                 ),
-                                                IconButton(
-                                                  icon: const Icon(
-                                                    Icons.edit,
-                                                    size: 20,
-                                                    color: Colors.grey,
-                                                  ),
-                                                  onPressed: () async {
-                                                    await _editScheduleTitle(
-                                                      context,
-                                                      scheduleService,
-                                                      schedule,
-                                                    );
-                                                  },
-                                                ),
                                               ],
                                             ),
                                             const SizedBox(height: 4),
@@ -346,13 +332,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           ],
                                         ),
                                       ),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete_outline),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder:
-                                                (context) => AlertDialog(
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.edit,
+                                              size: 20,
+                                              color: Colors.grey,
+                                            ),
+                                            onPressed: () async {
+                                              await _editScheduleTitle(
+                                                context,
+                                                scheduleService,
+                                                schedule,
+                                              );
+                                            },
+                                          ),
+                                          IconButton(
+                                            icon: const Icon(Icons.delete_outline),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (context) => AlertDialog(
                                                   title: const Text(
                                                     'Delete Schedule',
                                                   ),
@@ -388,8 +391,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                     ),
                                                   ],
                                                 ),
-                                          );
-                                        },
+                                              );
+                                            },
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),

@@ -4,7 +4,7 @@ import '../screens/modals/course_modal.dart';
 import '../../models/schedule.dart';
 import '../../services/schedule_service.dart';
 
-class ScheduleDetailScreen extends StatelessWidget {
+class ScheduleDetailScreen extends StatefulWidget {
   final String scheduleId;
   
   const ScheduleDetailScreen({
@@ -12,6 +12,11 @@ class ScheduleDetailScreen extends StatelessWidget {
     required this.scheduleId,
   });
 
+  @override
+  State<ScheduleDetailScreen> createState() => _ScheduleDetailScreenState();
+}
+
+class _ScheduleDetailScreenState extends State<ScheduleDetailScreen> {
   static const List<String> timeSlots = [
     '06:00', '06:30', '07:00', '07:30', '08:00', '08:30',
     '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
@@ -23,11 +28,33 @@ class ScheduleDetailScreen extends StatelessWidget {
   static const List<String> days = ['M', 'T', 'W', 'Th', 'F', 'Sat'];
 
   @override
+  void initState() {
+    super.initState();
+    // Add a listener to the schedule service
+    final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+    scheduleService.addListener(_onScheduleChanged);
+  }
+
+  @override
+  void dispose() {
+    // Remove the listener when the widget is disposed
+    final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+    scheduleService.removeListener(_onScheduleChanged);
+    super.dispose();
+  }
+
+  void _onScheduleChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<ScheduleService>(
       builder: (context, scheduleService, child) {
         final schedule = scheduleService.schedules.firstWhere(
-          (s) => s.id == scheduleId,
+          (s) => s.id == widget.scheduleId,
           orElse: () {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.of(context).pop();
@@ -38,7 +65,7 @@ class ScheduleDetailScreen extends StatelessWidget {
                 ),
               );
             });
-            return Schedule(name: '');
+            return Schedule(name: '', courses: []);
           },
         );
 
@@ -70,6 +97,17 @@ class ScheduleDetailScreen extends StatelessWidget {
               ),
               const SizedBox(width: 8),
             ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => CourseModal(
+                  scheduleId: widget.scheduleId,
+                ),
+              );
+            },
+            child: const Icon(Icons.add),
           ),
           body: Column(
             children: [
@@ -183,7 +221,7 @@ class ScheduleDetailScreen extends StatelessWidget {
                                             showDialog(
                                               context: context,
                                               builder: (context) => CourseModal(
-                                                scheduleId: scheduleId,
+                                                scheduleId: widget.scheduleId,
                                                 course: course,
                                               ),
                                             );
@@ -209,34 +247,14 @@ class ScheduleDetailScreen extends StatelessWidget {
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black87,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
                                                 ),
-                                                if (heightInBlocks >= 2) ...[
-                                                  Text(
-                                                    course.type,
-                                                    style: const TextStyle(
-                                                      fontSize: 10,
-                                                      color: Colors.black54,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
+                                                Text(
+                                                  course.location,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Colors.grey[700],
                                                   ),
-                                                  Text(
-                                                    course.instructor,
-                                                    style: const TextStyle(
-                                                      fontSize: 10,
-                                                      color: Colors.black54,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                  Text(
-                                                    course.location,
-                                                    style: const TextStyle(
-                                                      fontSize: 10,
-                                                      color: Colors.black54,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                  ),
-                                                ],
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -265,17 +283,6 @@ class ScheduleDetailScreen extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (context) => CourseModal(
-                  scheduleId: scheduleId,
-                ),
-              );
-            },
-            child: const Icon(Icons.add),
           ),
         );
       },

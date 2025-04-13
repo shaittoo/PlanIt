@@ -30,7 +30,7 @@ class _CourseModalState extends State<CourseModal> {
   late Set<String> selectedDays;
   late String selectedTag;
   
-  final List<String> tagOptions = ['School', 'Work', 'Personal'];
+  late List<String> tagOptions;
   final List<Color> colorOptions = [
     const Color(0xFFFFE082), 
     const Color(0xFFB2FF59),
@@ -49,6 +49,7 @@ class _CourseModalState extends State<CourseModal> {
   @override
   void initState() {
     super.initState();
+    _loadTags();
     if (isEditing) {
       _titleController = TextEditingController(text: widget.course!.name);
       _courseTypeController = TextEditingController(text: widget.course!.type);
@@ -73,6 +74,13 @@ class _CourseModalState extends State<CourseModal> {
     }
   }
 
+  void _loadTags() {
+    final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+    final allTags = scheduleService.getAllTags();
+    final defaultTags = ['School', 'Work', 'Personal'];
+    tagOptions = [...defaultTags, ...allTags.where((tag) => !defaultTags.contains(tag))]..sort();
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -83,7 +91,7 @@ class _CourseModalState extends State<CourseModal> {
     super.dispose();
   }
 
-  void _saveCourse() {
+  void _saveCourse() async {
     if (_titleController.text.isEmpty) {
       _showToast('Please enter a course title');
       return;
@@ -94,27 +102,36 @@ class _CourseModalState extends State<CourseModal> {
       return;
     }
 
-    final course = Course(
-      id: isEditing ? widget.course!.id : const Uuid().v4(),
-      name: _titleController.text,
-      type: _courseTypeController.text,
-      startTime: startTime,
-      endTime: endTime,
-      weekDays: selectedDays.toList(),
-      location: _locationController.text,
-      instructor: _instructorController.text,
-      color: Color(int.parse('FF$selectedColor', radix: 16)),
-      scheduleId: widget.scheduleId,
-      tag: selectedTag,
-    );
+    try {
+      final course = Course(
+        id: isEditing ? widget.course!.id : const Uuid().v4(),
+        name: _titleController.text,
+        type: _courseTypeController.text,
+        startTime: startTime,
+        endTime: endTime,
+        weekDays: selectedDays.toList(),
+        location: _locationController.text,
+        instructor: _instructorController.text,
+        color: Color(int.parse('FF$selectedColor', radix: 16)),
+        scheduleId: widget.scheduleId,
+        tag: selectedTag,
+      );
 
-    final scheduleService = Provider.of<ScheduleService>(context, listen: false);
-    if (isEditing) {
-      scheduleService.updateCourse(widget.scheduleId, course);
-    } else {
-      scheduleService.addCourseToSchedule(widget.scheduleId, course);
+      final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+      
+      if (isEditing) {
+        await scheduleService.updateCourse(widget.scheduleId, course);
+      } else {
+        await scheduleService.addCourseToSchedule(widget.scheduleId, course);
+      }
+      
+      if (mounted) {
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      print('Error saving course: $e');
+      _showToast('Error saving course. Please try again.');
     }
-    Navigator.pop(context);
   }
 
   @override
@@ -285,12 +302,20 @@ class _CourseModalState extends State<CourseModal> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               if (isEditing) {
-                                final scheduleService = Provider.of<ScheduleService>(context, listen: false);
-                                scheduleService.deleteCourse(widget.scheduleId, widget.course!.id);
+                                try {
+                                  final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+                                  await scheduleService.deleteCourse(widget.scheduleId, widget.course!.id);
+                                } catch (e) {
+                                  print('Error deleting course: $e');
+                                  _showToast('Error deleting course. Please try again.');
+                                  return;
+                                }
                               }
-                              Navigator.pop(context);
+                              if (mounted) {
+                                Navigator.pop(context);
+                              }
                             },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -330,7 +355,9 @@ class _CourseModalState extends State<CourseModal> {
   }
 
   Widget _buildTagSelector() {
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
       children: tagOptions.map((tag) {
         final isSelected = selectedTag == tag;
         Color tagColor;
@@ -345,30 +372,27 @@ class _CourseModalState extends State<CourseModal> {
             tagColor = Colors.blue;
         }
 
-        return Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () {
-              setState(() {
-                selectedTag = tag;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: isSelected ? tagColor : Colors.transparent,
-                border: Border.all(
-                  color: isSelected ? tagColor : Colors.grey,
-                ),
-                borderRadius: BorderRadius.circular(16),
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              selectedTag = tag;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: isSelected ? tagColor : Colors.transparent,
+              border: Border.all(
+                color: isSelected ? tagColor : Colors.grey,
               ),
-              child: Text(
-                tag,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.grey,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Text(
+              tag,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
