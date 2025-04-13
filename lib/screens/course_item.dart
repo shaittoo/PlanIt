@@ -10,11 +10,7 @@ class CourseItem extends StatelessWidget {
   final Course course;
   final VoidCallback onTap;
 
-  const CourseItem({
-    super.key,
-    required this.course,
-    required this.onTap,
-  });
+  const CourseItem({super.key, required this.course, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +31,18 @@ class CourseItem extends StatelessWidget {
             children: [
               _buildHeader(color, course.name, course.type, textStyleSecondary),
               const SizedBox(height: 8),
-              Text('$startTime - $endTime', style: const TextStyle(fontSize: 16)),
+              Text(
+                '$startTime - $endTime',
+                style: const TextStyle(fontSize: 16),
+              ),
               const SizedBox(height: 4),
               Text(course.weekDays.join(', '), style: textStyleSecondary),
               const SizedBox(height: 8),
-              _buildInfoRow(course.location, course.instructor, textStyleSecondary),
+              _buildInfoRow(
+                course.location,
+                course.instructor,
+                textStyleSecondary,
+              ),
             ],
           ),
         ),
@@ -47,8 +50,14 @@ class CourseItem extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(Color color, String name, String type, TextStyle textStyle) {
+  Widget _buildHeader(
+    Color color,
+    String name,
+    String type,
+    TextStyle textStyle,
+  ) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 12,
@@ -57,26 +66,71 @@ class CourseItem extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            name,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                softWrap: true, // Allow text to wrap
+                overflow: TextOverflow.visible, // Ensure text is fully visible
+              ),
+              const SizedBox(height: 4),
+              Text(
+                type,
+                style: textStyle.copyWith(fontWeight: FontWeight.w500),
+                softWrap: true, // Allow text to wrap
+                overflow: TextOverflow.visible, // Ensure text is fully visible
+              ),
+            ],
           ),
         ),
-        Text(type, style: textStyle.copyWith(fontWeight: FontWeight.w500)),
       ],
     );
   }
 
-  Widget _buildInfoRow(String location, String instructor, TextStyle textStyle) {
-    return Row(
+  Widget _buildInfoRow(
+    String location,
+    String instructor,
+    TextStyle textStyle,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(Icons.location_on, size: 16, color: Colors.grey),
-        const SizedBox(width: 4),
-        Expanded(child: Text(location, style: textStyle)),
-        const SizedBox(width: 16),
-        const Icon(Icons.person, size: 16, color: Colors.grey),
-        const SizedBox(width: 4),
-        Expanded(child: Text(instructor, style: textStyle)),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.location_on, size: 16, color: Colors.grey),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                location,
+                style: textStyle,
+                softWrap: true, // Allow text to wrap
+                overflow: TextOverflow.visible, // Ensure text is fully visible
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.person, size: 16, color: Colors.grey),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                instructor,
+                style: textStyle,
+                softWrap: true, // Allow text to wrap
+                overflow: TextOverflow.visible, // Ensure text is fully visible
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -87,7 +141,7 @@ class CourseItem extends StatelessWidget {
     try {
       hexColor = hexColor.replaceAll('#', '');
       if (hexColor.length == 6) {
-        hexColor = 'FF$hexColor'; 
+        hexColor = 'FF$hexColor';
       }
       return Color(int.parse(hexColor, radix: 16));
     } catch (_) {

@@ -51,6 +51,22 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
   void initState() {
     super.initState();
     _scheduleId = const Uuid().v4();
+
+    // Initialize the schedule in the service
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scheduleService = Provider.of<ScheduleService>(
+        context,
+        listen: false,
+      );
+      final schedule = Schedule(
+        id: _scheduleId,
+        name:
+            _titleController.text.isEmpty ? 'Untitled' : _titleController.text,
+        courses: [],
+        createdAt: DateTime.now(),
+      );
+      scheduleService.addSchedule(schedule);
+    });
   }
 
   @override
@@ -114,7 +130,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
           autofocus: true,
           decoration: InputDecoration(
             border: InputBorder.none,
-            hintText: 'Untitled',
+            hintText: 'Enter Schedule Title',
             hintStyle: TextStyle(
               color: Colors.grey[500],
               fontSize: 20,
@@ -233,9 +249,19 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
 
     return Consumer<ScheduleService>(
       builder: (context, scheduleService, child) {
+        // Find the schedule or create a new one if it doesn't exist
         final schedule = scheduleService.schedules.firstWhere(
           (s) => s.id == _scheduleId,
-          orElse: () => Schedule(id: _scheduleId, name: _titleController.text),
+          orElse:
+              () => Schedule(
+                id: _scheduleId,
+                name:
+                    _titleController.text.isEmpty
+                        ? 'Untitled'
+                        : _titleController.text,
+                courses: [],
+                createdAt: DateTime.now(),
+              ),
         );
 
         return Container(
@@ -322,7 +348,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black87,
                                     ),
-                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: true, // Allow text to wrap
+                                    overflow:
+                                        TextOverflow
+                                            .visible, // Ensure text is fully visible
                                   ),
                                   if (heightInBlocks > 1) ...[
                                     Text(
@@ -331,7 +360,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true, // Allow text to wrap
+                                      overflow:
+                                          TextOverflow
+                                              .visible, // Ensure text is fully visible
                                     ),
                                     Text(
                                       'Prof. ${course.instructor}',
@@ -339,7 +371,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true, // Allow text to wrap
+                                      overflow:
+                                          TextOverflow
+                                              .visible, // Ensure text is fully visible
                                     ),
                                     Text(
                                       course.location,
@@ -347,7 +382,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: true, // Allow text to wrap
+                                      overflow:
+                                          TextOverflow
+                                              .visible, // Ensure text is fully visible
                                     ),
                                   ],
                                 ],

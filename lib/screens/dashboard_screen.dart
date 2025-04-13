@@ -280,14 +280,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           children: [
                                             Row(
                                               children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    schedule.name,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
+                                                Text(
+                                                  schedule.name,
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight:
+                                                        FontWeight.bold,
                                                   ),
                                                 ),
                                                 IconButton(

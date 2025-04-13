@@ -25,11 +25,32 @@ class ScheduleService extends ChangeNotifier {
   }
 
   Future<void> addCourseToSchedule(String scheduleId, Course course) async {
-    await StorageService.saveCourse(course);
     final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
     if (scheduleIndex != -1) {
+      // Add course to memory
       schedules[scheduleIndex].courses.add(course);
+
+      // Save course to storage
+      await StorageService.saveCourse(course);
       await StorageService.saveSchedule(schedules[scheduleIndex]);
+
+      // Notify listeners to rebuild UI
+      notifyListeners();
+    } else {
+      // If schedule doesn't exist yet, create it
+      final schedule = Schedule(
+        id: scheduleId,
+        name: 'Untitled',
+        courses: [course],
+        createdAt: DateTime.now(),
+      );
+      schedules.add(schedule);
+
+      // Save to storage
+      await StorageService.saveCourse(course);
+      await StorageService.saveSchedule(schedule);
+
+      // Notify listeners to rebuild UI
       notifyListeners();
     }
   }
@@ -71,14 +92,13 @@ class ScheduleService extends ChangeNotifier {
   void updateCourse(String scheduleId, Course updatedCourse) {
     final scheduleIndex = schedules.indexWhere((s) => s.id == scheduleId);
     if (scheduleIndex != -1) {
-      final courseIndex = schedules[scheduleIndex].courses
-          .indexWhere((c) => c.id == updatedCourse.id);
+      final courseIndex = schedules[scheduleIndex].courses.indexWhere(
+        (c) => c.id == updatedCourse.id,
+      );
       if (courseIndex != -1) {
         schedules[scheduleIndex].courses[courseIndex] = updatedCourse;
         notifyListeners();
       }
     }
   }
-
-
-} 
+}
