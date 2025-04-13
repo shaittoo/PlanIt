@@ -1,14 +1,13 @@
 import 'package:flutter/foundation.dart';
-import 'dart:html' if (dart.library.io) 'dart:io';
-import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../models/schedule.dart';
 import '../models/course.dart';
-import '../services/hive_adapters.dart';
+import 'hive_adapters.dart';
 
 class StorageService {
   static late Box<Schedule> _scheduleBox;
   static late Box<Course> _courseBox;
+  static late Box _settingsBox;
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -20,18 +19,31 @@ class StorageService {
     
     _scheduleBox = await Hive.openBox<Schedule>('schedules');
     _courseBox = await Hive.openBox<Course>('courses');
+    _settingsBox = await Hive.openBox('settings');
   }
 
   static Future<void> saveSchedule(Schedule schedule) async {
     await _scheduleBox.put(schedule.id, schedule);
   }
 
-  static Future<void> saveCourse(Course course) async {
-    await _courseBox.put(course.id, course);
-  }
-
   static List<Schedule> getAllSchedules() {
     return _scheduleBox.values.toList();
+  }
+
+  static Future<void> deleteSchedule(String scheduleId) async {
+    await _scheduleBox.delete(scheduleId);
+    
+    final coursesToDelete = _courseBox.values
+        .where((course) => course.scheduleId == scheduleId)
+        .toList();
+    
+    await Future.wait(
+      coursesToDelete.map((course) => _courseBox.delete(course.id))
+    );
+  }
+
+  static Future<void> saveCourse(Course course) async {
+    await _courseBox.put(course.id, course);
   }
 
   static List<Course> getCoursesForSchedule(String scheduleId) {
@@ -40,36 +52,22 @@ class StorageService {
         .toList();
   }
 
-  static Future<void> deleteSchedule(String scheduleId) async {
-    await _scheduleBox.delete(scheduleId);
-    // Delete associated courses
-    final coursesToDelete = _courseBox.values
-        .where((course) => course.scheduleId == scheduleId)
-        .map((course) => course.id);
-    
-    for (var courseId in coursesToDelete) {
-      await _courseBox.delete(courseId);
-    }
+  static Future<void> clear() async {
+    await Future.wait([
+      _scheduleBox.clear(),
+      _courseBox.clear(),
+    ]);
   }
 
-  static Future<void> clear() async {
-    await _scheduleBox.clear();
-    await _courseBox.clear();
+  static bool isInitialized() {
+    return Hive.isBoxOpen('schedules') && Hive.isBoxOpen('courses');
   }
 
   static Future<void> saveData(String key, dynamic value) async {
-    if (kIsWeb) {
-      window.localStorage[key] = jsonEncode(value);
-    }
+    await _settingsBox.put(key, value);
   }
 
   static dynamic getData(String key) {
-    if (kIsWeb) {
-      final data = window.localStorage[key];
-      if (data != null) {
-        return jsonDecode(data);
-      }
-    }
-    return null;
+    return _settingsBox.get(key);
   }
 } 

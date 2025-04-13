@@ -34,7 +34,7 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Jules',
+                    'User',
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.w500,
