@@ -45,6 +45,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+      ),
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
@@ -67,15 +70,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       'Hello,',
                       style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500),
                     ),
-                  ),
-                  Text(
-                    'User',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),
@@ -224,21 +220,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
-      floatingActionButton: Container(
-        margin: const EdgeInsets.only(bottom: 24),
-        width: 150,
-        height: 50,
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/create-schedule');
-          },
-          backgroundColor: Colors.amber,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-          child: const Text(
-            'Create New',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/create-schedule');
+        },
+        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
