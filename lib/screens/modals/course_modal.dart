@@ -6,7 +6,7 @@ import 'package:uuid/uuid.dart';
 
 class CourseModal extends StatefulWidget {
   final String scheduleId;
-  final Course? course;  // null for create mode, non-null for edit mode
+  final Course? course; 
 
   const CourseModal({
     super.key,
@@ -30,7 +30,6 @@ class _CourseModalState extends State<CourseModal> {
   late Set<String> selectedDays;
   late String selectedTag;
   
-  // Move these to constants file later
   final List<String> tagOptions = ['School', 'Work', 'Personal'];
   final List<Color> colorOptions = [
     const Color(0xFFFFE082), 
@@ -51,7 +50,6 @@ class _CourseModalState extends State<CourseModal> {
   void initState() {
     super.initState();
     if (isEditing) {
-      // Edit mode - initialize with existing course data
       _titleController = TextEditingController(text: widget.course!.name);
       _courseTypeController = TextEditingController(text: widget.course!.type);
       _instructorController = TextEditingController(text: widget.course!.instructor);
@@ -287,14 +285,21 @@ class _CourseModalState extends State<CourseModal> {
                       children: [
                         Expanded(
                           child: OutlinedButton(
-                            onPressed: () => Navigator.pop(context),
+                            onPressed: () {
+                              if (isEditing) {
+                                final scheduleService = Provider.of<ScheduleService>(context, listen: false);
+                                scheduleService.deleteCourse(widget.scheduleId, widget.course!.id);
+                              }
+                              Navigator.pop(context);
+                            },
                             style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
+                              foregroundColor: isEditing ? Colors.red : null,
                             ),
-                            child: const Text('Cancel'),
+                            child: Text(isEditing ? 'Delete' : 'Cancel'),
                           ),
                         ),
                         const SizedBox(width: 12),
