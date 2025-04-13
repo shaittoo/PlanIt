@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/schedule.dart';
 import '../../services/schedule_service.dart';
-import '../../screens/create_course_modal.dart';
+import '../screens/modals/course_modal.dart';
 import 'package:uuid/uuid.dart';
 import '../../models/course.dart';
-import '../../screens/edit_course_modal.dart';
 
 class CreateScheduleScreen extends StatefulWidget {
   const CreateScheduleScreen({super.key});
@@ -159,7 +158,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         onPressed: () {
           showDialog(
             context: context,
-            builder: (context) => CreateCourseModal(
+            builder: (context) => CourseModal(
               scheduleId: _scheduleId,
             ),
           );
@@ -252,9 +251,9 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                             onTap: () {
                               showDialog(
                                 context: context,
-                                builder: (context) => EditCourseModal(
-                                  course: course,
+                                builder: (context) => CourseModal(
                                   scheduleId: _scheduleId,
+                                  course: course,
                                 ),
                               );
                             },
