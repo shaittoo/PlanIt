@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/schedule_service.dart';
 import '../../services/storage_service.dart';
+import '../../models/schedule.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -31,7 +32,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     await showDialog<void>(
       context: context,
       builder: (BuildContext dialogContext) {
-        final TextEditingController controller = TextEditingController(text: userName);
+        final TextEditingController controller = TextEditingController(
+          text: userName,
+        );
         return AlertDialog(
           title: const Text('Edit Name'),
           content: TextField(
@@ -71,6 +74,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Future<void> _editScheduleTitle(
+    BuildContext context,
+    ScheduleService scheduleService,
+    Schedule schedule,
+  ) async {
+    String? result;
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final TextEditingController controller = TextEditingController(
+          text: schedule.name,
+        );
+        return AlertDialog(
+          title: const Text('Edit Schedule Title'),
+          content: TextField(
+            autofocus: true,
+            controller: controller,
+            decoration: const InputDecoration(
+              hintText: 'Enter schedule title',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                result = controller.text.trim();
+                Navigator.pop(dialogContext);
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != null && result!.isNotEmpty) {
+      schedule.name = result!;
+      await scheduleService.updateSchedule(schedule);
+      if (mounted) {
+        setState(() {});
+      }
+    } else if (result != null && result!.isEmpty) {
+      // Prompt the user if the title is empty
+      await Future.delayed(Duration.zero); // Ensure dialog runs after UI update
+      showDialog(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: const Text('Invalid Title'),
+              content: const Text(
+                'The schedule title cannot be empty. Please enter a valid title.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,18 +158,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   const Text(
                     'Dashboard',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   const Text(
                     'Hello,',
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 36, fontWeight: FontWeight.w500),
                   ),
                   GestureDetector(
                     onTap: _editUserName,
@@ -111,11 +177,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Icon(
-                          Icons.edit,
-                          size: 20,
-                          color: Colors.grey,
-                        ),
+                        const Icon(Icons.edit, size: 20, color: Colors.grey),
                       ],
                     ),
                   ),
@@ -213,14 +275,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     children: [
                                       Expanded(
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              schedule.name,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    schedule.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    Icons.edit,
+                                                    size: 20,
+                                                    color: Colors.grey,
+                                                  ),
+                                                  onPressed: () async {
+                                                    await _editScheduleTitle(
+                                                      context,
+                                                      scheduleService,
+                                                      schedule,
+                                                    );
+                                                  },
+                                                ),
+                                              ],
                                             ),
                                             const SizedBox(height: 4),
                                             const Text(
@@ -231,19 +315,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               ),
                                             ),
                                             Container(
-                                              margin: const EdgeInsets.only(top: 8),
-                                              padding: const EdgeInsets.symmetric(
-                                                horizontal: 8,
-                                                vertical: 4,
+                                              margin: const EdgeInsets.only(
+                                                top: 8,
                                               ),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
                                               decoration: BoxDecoration(
-                                                color: schedule.name.contains('Work') 
-                                                    ? Colors.red 
-                                                    : Colors.green,
-                                                borderRadius: BorderRadius.circular(12),
+                                                color:
+                                                    schedule.name.contains(
+                                                          'Work',
+                                                        )
+                                                        ? Colors.red
+                                                        : Colors.green,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                               ),
                                               child: Text(
-                                                schedule.name.contains('Work') ? 'Work' : 'School',
+                                                schedule.name.contains('Work')
+                                                    ? 'Work'
+                                                    : 'School',
                                                 style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 12,
@@ -258,28 +351,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         onPressed: () {
                                           showDialog(
                                             context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: const Text('Delete Schedule'),
-                                              content: Text(
-                                                'Are you sure you want to delete "${schedule.name}"? This action cannot be undone.'
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(context),
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await scheduleService.deleteSchedule(schedule.id);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  style: TextButton.styleFrom(
-                                                    foregroundColor: Colors.red,
+                                            builder:
+                                                (context) => AlertDialog(
+                                                  title: const Text(
+                                                    'Delete Schedule',
                                                   ),
-                                                  child: const Text('Delete'),
+                                                  content: Text(
+                                                    'Are you sure you want to delete "${schedule.name}"? This action cannot be undone.',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed:
+                                                          () => Navigator.pop(
+                                                            context,
+                                                          ),
+                                                      child: const Text(
+                                                        'Cancel',
+                                                      ),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () async {
+                                                        await scheduleService
+                                                            .deleteSchedule(
+                                                              schedule.id,
+                                                            );
+                                                        Navigator.pop(context);
+                                                      },
+                                                      style:
+                                                          TextButton.styleFrom(
+                                                            foregroundColor:
+                                                                Colors.red,
+                                                          ),
+                                                      child: const Text(
+                                                        'Delete',
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
                                           );
                                         },
                                       ),
