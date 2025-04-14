@@ -269,6 +269,7 @@ class _CourseModalState extends State<CourseModal> {
                   children: [
                     TextField(
                       controller: _titleController,
+                      autofocus: true,
                       decoration: InputDecoration(
                         labelText: 'Course Name',
                         hintText: 'Enter course name',

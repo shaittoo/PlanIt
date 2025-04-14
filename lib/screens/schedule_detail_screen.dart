@@ -202,14 +202,17 @@ class ScheduleDetailScreen extends StatelessWidget {
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  course.name,
-                                                  style: const TextStyle(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
+                                                Flexible(
+                                                  child: Text(
+                                                    course.name,
+                                                    style: const TextStyle(
+                                                      fontSize: 11,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    maxLines: 3,
+                                                    overflow: TextOverflow.ellipsis,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
                                                 ),
                                                 if (heightInBlocks >= 2) ...[
                                                   Text(
