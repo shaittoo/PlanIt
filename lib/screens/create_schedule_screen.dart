@@ -135,8 +135,25 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: TextButton(
-              onPressed: () {
-                _saveSchedule(context);
+              onPressed: () async {
+                if (_titleController.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Please enter a schedule name',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      backgroundColor: Colors.red,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  return;
+                }
+
+                await _saveSchedule(context);
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text(
                 'Done',
