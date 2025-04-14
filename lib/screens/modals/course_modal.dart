@@ -250,6 +250,7 @@ class _CourseModalState extends State<CourseModal> {
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent
                     ),
                   ),
                   IconButton(
@@ -269,6 +270,7 @@ class _CourseModalState extends State<CourseModal> {
                   children: [
                     TextField(
                       controller: _titleController,
+                      cursorColor: Colors.blue,
                       autofocus: true,
                       decoration: InputDecoration(
                         labelText: 'Course Name',
@@ -276,6 +278,7 @@ class _CourseModalState extends State<CourseModal> {
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8),
+
                         ),
                       ),
                     ),
@@ -405,7 +408,8 @@ class _CourseModalState extends State<CourseModal> {
                               ),
                               foregroundColor: isEditing ? Colors.red : null,
                             ),
-                            child: Text(isEditing ? 'Delete' : 'Cancel'),
+                            child: Text(isEditing ? 'Delete' : 'Cancel',
+                            ),
                           ),
                         ),
                         const SizedBox(width: 12),
