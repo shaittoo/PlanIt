@@ -52,7 +52,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     super.initState();
     _scheduleId = const Uuid().v4();
 
-    // Initialize the schedule in the service
+    //initialize the schedule in the service
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final scheduleService = Provider.of<ScheduleService>(
         context,
@@ -249,7 +249,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
 
     return Consumer<ScheduleService>(
       builder: (context, scheduleService, child) {
-        // Find the schedule or create a new one if it doesn't exist
+        //find the schedule or create a new one if it doesn't exist
         final schedule = scheduleService.schedules.firstWhere(
           (s) => s.id == _scheduleId,
           orElse:
@@ -348,10 +348,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black87,
                                     ),
-                                    softWrap: true, // Allow text to wrap
+                                    softWrap: true,
                                     overflow:
                                         TextOverflow
-                                            .visible, // Ensure text is fully visible
+                                            .visible, 
                                   ),
                                   if (heightInBlocks > 1) ...[
                                     Text(
@@ -360,10 +360,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      softWrap: true, // Allow text to wrap
+                                      softWrap: true, 
                                       overflow:
                                           TextOverflow
-                                              .visible, // Ensure text is fully visible
+                                              .visible, 
                                     ),
                                     Text(
                                       'Prof. ${course.instructor}',
@@ -371,10 +371,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      softWrap: true, // Allow text to wrap
+                                      softWrap: true, //text wrapping
                                       overflow:
                                           TextOverflow
-                                              .visible, // Ensure text is fully visible
+                                              .visible, 
                                     ),
                                     Text(
                                       course.location,
@@ -382,10 +382,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      softWrap: true, // Allow text to wrap
+                                      softWrap: true, //text wrapping
                                       overflow:
                                           TextOverflow
-                                              .visible, // Ensure text is fully visible
+                                              .visible, 
                                     ),
                                   ],
                                 ],

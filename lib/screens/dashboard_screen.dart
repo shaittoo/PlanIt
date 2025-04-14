@@ -13,6 +13,10 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   String userName = 'User';
+  String selectedFilter = 'All';
+  String sortBy = 'Newest';
+  final List<String> filterOptions = ['All', 'School', 'Work', 'Personal'];
+  final List<String> sortOptions = ['Newest', 'Oldest', 'A-Z', 'Z-A'];
 
   @override
   void initState() {
@@ -143,6 +147,142 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Future<void> _showFilterDialog() async {
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: const Text('Filter & Sort'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Filter by Tag',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: filterOptions.map((filter) {
+                      return ChoiceChip(
+                        label: Text(filter),
+                        selected: selectedFilter == filter,
+                        onSelected: (selected) {
+                          setState(() {
+                            selectedFilter = filter;
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Sort by',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: sortOptions.map((sort) {
+                      return ChoiceChip(
+                        label: Text(sort),
+                        selected: sortBy == sort,
+                        onSelected: (selected) {
+                          setState(() {
+                            sortBy = sort;
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Close'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+    setState(() {});
+  }
+
+  List<Schedule> _getFilteredSchedules(List<Schedule> schedules) {
+    List<Schedule> filtered = schedules;
+
+    // Apply tag filter
+    if (selectedFilter != 'All') {
+      filtered = filtered.where((schedule) {
+        return schedule.courses.any((course) => course.tag == selectedFilter);
+      }).toList();
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'Newest':
+        filtered.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        break;
+      case 'Oldest':
+        filtered.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        break;
+      case 'A-Z':
+        filtered.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 'Z-A':
+        filtered.sort((a, b) => b.name.compareTo(a.name));
+        break;
+    }
+
+    return filtered;
+  }
+
+  String _formatDate(DateTime date) {
+    final day = date.day;
+    final month = _getMonthName(date.month);
+    final year = date.year;
+    return '$month $day, $year';
+  }
+
+  String _getMonthName(int month) {
+    switch (month) {
+      case 1:
+        return 'January';
+      case 2:
+        return 'February';
+      case 3:
+        return 'March';
+      case 4:
+        return 'April';
+      case 5:
+        return 'May';
+      case 6:
+        return 'June';
+      case 7:
+        return 'July';
+      case 8:
+        return 'August';
+      case 9:
+        return 'September';
+      case 10:
+        return 'October';
+      case 11:
+        return 'November';
+      case 12:
+        return 'December';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -210,32 +350,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Filters',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
+                          GestureDetector(
+                            onTap: _showFilterDialog,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Filters',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: selectedFilter != 'All' || sortBy != 'Newest'
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 4),
-                                Icon(
-                                  Icons.filter_list,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                              ],
+                                  const SizedBox(width: 4),
+                                  Icon(
+                                    Icons.filter_list,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],
@@ -244,11 +390,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Expanded(
                       child: Consumer<ScheduleService>(
                         builder: (context, scheduleService, child) {
+                          final filteredSchedules = _getFilteredSchedules(scheduleService.schedules);
                           return ListView.builder(
                             padding: const EdgeInsets.fromLTRB(24, 0, 24, 100),
-                            itemCount: scheduleService.schedules.length,
+                            itemCount: filteredSchedules.length,
                             itemBuilder: (context, index) {
-                              final schedule = scheduleService.schedules[index];
+                              final schedule = filteredSchedules[index];
                               return GestureDetector(
                                 onTap: () {
                                   Navigator.pushNamed(
@@ -305,40 +452,54 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                               ],
                                             ),
                                             const SizedBox(height: 4),
-                                            const Text(
-                                              'M - Th',
-                                              style: TextStyle(
+                                            Text(
+                                              'Created on ${_formatDate(schedule.createdAt)}',
+                                              style: const TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 14,
                                               ),
                                             ),
-                                            Container(
-                                              margin: const EdgeInsets.only(
-                                                top: 8,
-                                              ),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 4,
-                                                  ),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    schedule.name.contains(
-                                                          'Work',
-                                                        )
-                                                        ? Colors.red
-                                                        : Colors.green,
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: Text(
-                                                schedule.name.contains('Work')
-                                                    ? 'Work'
-                                                    : 'School',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 12,
-                                                ),
+                                            SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Row(
+                                                children: schedule.courses
+                                                    .where((course) => course.tag.isNotEmpty)
+                                                    .map((course) => course.tag)
+                                                    .toSet()
+                                                    .map((tag) {
+                                                  Color tagColor;
+                                                  switch (tag) {
+                                                    case 'School':
+                                                      tagColor = Colors.green;
+                                                      break;
+                                                    case 'Work':
+                                                      tagColor = Colors.red;
+                                                      break;
+                                                    default:
+                                                      tagColor = Colors.blue;
+                                                  }
+                                                  return Container(
+                                                    margin: const EdgeInsets.only(
+                                                      top: 8,
+                                                      right: 8,
+                                                    ),
+                                                    padding: const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: tagColor,
+                                                      borderRadius: BorderRadius.circular(12),
+                                                    ),
+                                                    child: Text(
+                                                      tag,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList(),
                                               ),
                                             ),
                                           ],
