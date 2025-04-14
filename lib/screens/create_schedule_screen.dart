@@ -51,22 +51,6 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
   void initState() {
     super.initState();
     _scheduleId = const Uuid().v4();
-
-    //initialize the schedule in the service
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final scheduleService = Provider.of<ScheduleService>(
-        context,
-        listen: false,
-      );
-      final schedule = Schedule(
-        id: _scheduleId,
-        name:
-            _titleController.text.isEmpty ? 'Untitled' : _titleController.text,
-        courses: [],
-        createdAt: DateTime.now(),
-      );
-      scheduleService.addSchedule(schedule);
-    });
   }
 
   @override
@@ -118,25 +102,16 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                     ),
               );
 
-            if (shouldDiscard == true) {
+              if (shouldDiscard == true) {
                 Navigator.of(context).pop();
               }
               return;
             }
 
-            final scheduleService = Provider.of<ScheduleService>(
-              context,
-              listen: false,
-            );
-            final schedule = Schedule(
-              id: _scheduleId,
-              name: _titleController.text,
-              courses: [],
-              createdAt: DateTime.now(),
-            );
-
-            await scheduleService.saveSchedule(schedule);
-            Navigator.of(context).pop();
+            await _saveSchedule(context);
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
           },
         ),
         title: TextField(
@@ -435,20 +410,20 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     );
   }
 
-  void _saveSchedule(BuildContext context) async {
-  if (_titleController.text.trim().isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Please enter a schedule name',
-          style: TextStyle(color: Colors.white),
+  Future<void> _saveSchedule(BuildContext context) async {
+    if (_titleController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please enter a schedule name',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
         ),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-    return;
-  }
+      );
+      return;
+    }
 
     final scheduleService = Provider.of<ScheduleService>(
       context,
@@ -462,6 +437,5 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     );
 
     await scheduleService.saveSchedule(schedule);
-    Navigator.of(context).pop();
   }
 }
