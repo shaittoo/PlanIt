@@ -57,7 +57,7 @@ class ScheduleDetailScreen extends StatelessWidget {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF7B61FF),  
+                  foregroundColor: const Color.fromARGB(255, 30, 124, 255),  
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                 ),
                 child: const Text(
@@ -270,6 +270,8 @@ class ScheduleDetailScreen extends StatelessWidget {
             ],
           ),
           floatingActionButton: FloatingActionButton(
+            backgroundColor: Colors.blue,
+            foregroundColor: Colors.yellow,
             onPressed: () {
               showDialog(
                 context: context,
