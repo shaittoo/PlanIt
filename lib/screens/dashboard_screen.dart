@@ -91,13 +91,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           text: schedule.name,
         );
         return AlertDialog(
-          title: const Text('Edit Schedule Title'),
+          title: const Text('Edit Schedule Title',
+          style: TextStyle(color: Colors.blueAccent),),
+          surfaceTintColor: Colors.blue,
+          backgroundColor: Colors.white,
           content: TextField(
             autofocus: true,
+            cursorColor: Colors.blue,
             controller: controller,
             decoration: const InputDecoration(
               hintText: 'Enter schedule title',
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8)),
+                borderSide: BorderSide(color: Colors.blue),
+              ),
             ),
           ),
           actions: [
@@ -105,14 +112,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onPressed: () {
                 Navigator.pop(dialogContext);
               },
-              child: const Text('Cancel'),
+              child: const Text('Cancel',
+              style: TextStyle(color: Colors.orange),),
             ),
             TextButton(
               onPressed: () {
                 result = controller.text.trim();
                 Navigator.pop(dialogContext);
               },
-              child: const Text('Save'),
+              child: const Text('Save',
+              style: TextStyle(color: Colors.blue),),
             ),
           ],
         );

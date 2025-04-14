@@ -51,22 +51,6 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
   void initState() {
     super.initState();
     _scheduleId = const Uuid().v4();
-
-    //initialize the schedule in the service
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final scheduleService = Provider.of<ScheduleService>(
-        context,
-        listen: false,
-      );
-      final schedule = Schedule(
-        id: _scheduleId,
-        name:
-            _titleController.text.isEmpty ? 'Untitled' : _titleController.text,
-        courses: [],
-        createdAt: DateTime.now(),
-      );
-      scheduleService.addSchedule(schedule);
-    });
   }
 
   @override
@@ -87,18 +71,32 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                 context: context,
                 builder:
                     (context) => AlertDialog(
-                      title: const Text('Discard Schedule?'),
+                      title: const Text(
+                        'Discard Schedule?',
+                        style: TextStyle(
+                          color: Colors.blueAccent),
+                      ),
+                      backgroundColor: Colors.white,
+                      surfaceTintColor: Colors.blue,
                       content: const Text(
                         'You have not entered a schedule title. Do you want to discard this schedule and go back?',
                       ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(false),
-                          child: const Text('Cancel'),
+                          child: const Text(
+                            'Cancel',
+                            style: TextStyle(
+                              color: Colors.blue
+                            ),),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('Discard'),
+                          child: const Text(
+                            'Discard',
+                            style: TextStyle(
+                              color: Colors.red
+                            ),),
                         ),
                       ],
                     ),
@@ -110,24 +108,16 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
               return;
             }
 
-            final scheduleService = Provider.of<ScheduleService>(
-              context,
-              listen: false,
-            );
-            final schedule = Schedule(
-              id: _scheduleId,
-              name: _titleController.text,
-              courses: [],
-              createdAt: DateTime.now(),
-            );
-
-            await scheduleService.saveSchedule(schedule);
-            Navigator.of(context).pop();
+            await _saveSchedule(context);
+            if (mounted) {
+              Navigator.of(context).pop();
+            }
           },
         ),
         title: TextField(
           controller: _titleController,
           autofocus: true,
+          cursorColor: Colors.blue,
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: 'Enter Schedule Title',
@@ -150,7 +140,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
               },
               child: const Text(
                 'Done',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                style: TextStyle(
+                  fontSize: 16, 
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent),
               ),
             ),
           ),
@@ -215,6 +208,8 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.yellow,
         onPressed: () {
           showDialog(
             context: context,
@@ -415,11 +410,15 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     );
   }
 
-  void _saveSchedule(BuildContext context) async {
+  Future<void> _saveSchedule(BuildContext context) async {
     if (_titleController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter a schedule name'),
+          content: Text(
+            'Please enter a schedule name',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -438,6 +437,5 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
     );
 
     await scheduleService.saveSchedule(schedule);
-    Navigator.of(context).pop();
   }
 }
