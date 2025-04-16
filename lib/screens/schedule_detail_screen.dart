@@ -17,7 +17,7 @@ class ScheduleDetailScreen extends StatelessWidget {
     '09:00', '09:30', '10:00', '10:30', '11:00', '11:30',
     '12:00', '12:30', '13:00', '13:30', '14:00', '14:30',
     '15:00', '15:30', '16:00', '16:30', '17:00', '17:30',
-    '18:00', '18:30', '19:00', '19:30', '20:00',
+    '18:00'
   ];
   
   static const List<String> days = ['M', 'T', 'W', 'Th', 'F', 'Sat'];
@@ -224,7 +224,7 @@ class ScheduleDetailScreen extends StatelessWidget {
                                                     overflow: TextOverflow.ellipsis,
                                                   ),
                                                   Text(
-                                                    course.instructor,
+                                                    'Prof. ${course.instructor}',
                                                     style: const TextStyle(
                                                       fontSize: 10,
                                                       color: Colors.black54,
@@ -239,7 +239,21 @@ class ScheduleDetailScreen extends StatelessWidget {
                                                     ),
                                                     overflow: TextOverflow.ellipsis,
                                                   ),
+                                                  Text(
+                                                    course.deliveryMode,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.black54,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
                                                 ],
+                                                const SizedBox(height: 4),
+                                                Wrap(
+                                                  spacing: 4,
+                                                  runSpacing: 4,
+                                                  children: course.tag.split(',').map((tag) => _buildTag(tag.trim())).toList(),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -300,6 +314,37 @@ class ScheduleDetailScreen extends StatelessWidget {
       return '12:$minute AM';
     } else {
       return '$hour:$minute AM';
+    }
+  }
+
+  Widget _buildTag(String tag) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: _getTagColor(tag),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        tag,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Color _getTagColor(String tag) {
+    switch (tag) {
+      case 'School':
+        return Colors.green;
+      case 'Work':
+        return Colors.red;
+      case 'Personal':
+        return Colors.blue;
+      default:
+        return Colors.grey;
     }
   }
 }

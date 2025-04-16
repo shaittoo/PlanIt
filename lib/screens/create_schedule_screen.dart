@@ -4,7 +4,6 @@ import '../../models/schedule.dart';
 import '../../services/schedule_service.dart';
 import '../screens/modals/course_modal.dart';
 import 'package:uuid/uuid.dart';
-import '../../models/course.dart';
 
 class CreateScheduleScreen extends StatefulWidget {
   const CreateScheduleScreen({super.key});
@@ -73,8 +72,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                     (context) => AlertDialog(
                       title: const Text(
                         'Discard Schedule?',
-                        style: TextStyle(
-                          color: Colors.blueAccent),
+                        style: TextStyle(color: Colors.blueAccent),
                       ),
                       backgroundColor: Colors.white,
                       surfaceTintColor: Colors.blue,
@@ -86,17 +84,15 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                           onPressed: () => Navigator.of(context).pop(false),
                           child: const Text(
                             'Cancel',
-                            style: TextStyle(
-                              color: Colors.blue
-                            ),),
+                            style: TextStyle(color: Colors.blue),
+                          ),
                         ),
                         TextButton(
                           onPressed: () => Navigator.of(context).pop(true),
                           child: const Text(
                             'Discard',
-                            style: TextStyle(
-                              color: Colors.red
-                            ),),
+                            style: TextStyle(color: Colors.red),
+                          ),
                         ),
                       ],
                     ),
@@ -158,9 +154,10 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
               child: const Text(
                 'Done',
                 style: TextStyle(
-                  fontSize: 16, 
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent),
+                  color: Colors.blueAccent,
+                ),
               ),
             ),
           ),
@@ -361,9 +358,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                       color: Colors.black87,
                                     ),
                                     softWrap: true,
-                                    overflow:
-                                        TextOverflow
-                                            .visible, 
+                                    overflow: TextOverflow.visible,
                                   ),
                                   if (heightInBlocks > 1) ...[
                                     Text(
@@ -372,10 +367,8 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         fontSize: 10,
                                         color: Colors.black87,
                                       ),
-                                      softWrap: true, 
-                                      overflow:
-                                          TextOverflow
-                                              .visible, 
+                                      softWrap: true,
+                                      overflow: TextOverflow.visible,
                                     ),
                                     Text(
                                       'Prof. ${course.instructor}',
@@ -384,9 +377,7 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         color: Colors.black87,
                                       ),
                                       softWrap: true, //text wrapping
-                                      overflow:
-                                          TextOverflow
-                                              .visible, 
+                                      overflow: TextOverflow.visible,
                                     ),
                                     Text(
                                       course.location,
@@ -395,11 +386,19 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
                                         color: Colors.black87,
                                       ),
                                       softWrap: true, //text wrapping
-                                      overflow:
-                                          TextOverflow
-                                              .visible, 
+                                      overflow: TextOverflow.visible,
                                     ),
                                   ],
+                                  const SizedBox(height: 4),
+                                  Wrap(
+                                    spacing: 4,
+                                    runSpacing: 4,
+                                    children:
+                                        course.tag
+                                            .split(',')
+                                            .map((tag) => _buildTag(tag.trim()))
+                                            .toList(),
+                                  ),
                                 ],
                               ),
                             ),
@@ -425,6 +424,37 @@ class _CreateScheduleScreenState extends State<CreateScheduleScreen> {
         );
       },
     );
+  }
+
+  Widget _buildTag(String tag) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: _getTagColor(tag),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        tag,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Color _getTagColor(String tag) {
+    switch (tag) {
+      case 'School':
+        return Colors.green;
+      case 'Work':
+        return Colors.red;
+      case 'Personal':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
   }
 
   Future<void> _saveSchedule(BuildContext context) async {
