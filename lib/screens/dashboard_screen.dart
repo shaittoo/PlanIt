@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../services/schedule_service.dart';
@@ -41,9 +42,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
         return AlertDialog(
           title: const Text('Edit Name'),
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.blue,
           content: TextField(
             autofocus: true,
             controller: controller,
+            cursorColor: Colors.blue,
             decoration: const InputDecoration(
               hintText: 'Enter your name',
               border: OutlineInputBorder(),
@@ -54,16 +58,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onPressed: () {
                 Navigator.pop(dialogContext);
               },
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(
+                color: Colors.red
+              ),),
             ),
             TextButton(
               onPressed: () {
                 result = controller.text.trim();
                 Navigator.pop(dialogContext);
               },
-              child: const Text('Save'),
+              child: const Text('Save', style: TextStyle(
+                color: Colors.blue),
             ),
-          ],
+        )],
         );
       },
     );
@@ -163,14 +170,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              title: const Text('Filter & Sort'),
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.blue,
+              title: const Text('Filter & Sort',
+              style: TextStyle(
+                color: Colors.blue,
+              ),),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     'Filter by Tag',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold, 
+                    color: Colors.blue),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -190,7 +203,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 16),
                   const Text(
                     'Sort by',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold,
+                    color: Colors.blue),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -214,7 +228,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('Close'),
+                  child: const Text('Close',
+                  style: TextStyle(
+                    color: Colors.blue
+                  ),),
                 ),
               ],
             );

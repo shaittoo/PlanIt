@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/course.dart';
-
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import '../../models/course.dart';
-
 class CourseItem extends StatelessWidget {
   final Course course;
   final VoidCallback onTap;
