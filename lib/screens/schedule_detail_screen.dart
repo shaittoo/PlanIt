@@ -239,6 +239,14 @@ class ScheduleDetailScreen extends StatelessWidget {
                                                     ),
                                                     overflow: TextOverflow.ellipsis,
                                                   ),
+                                                  Text(
+                                                    course.deliveryMode,
+                                                    style: const TextStyle(
+                                                      fontSize: 10,
+                                                      color: Colors.black54,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
                                                 ],
                                                 const SizedBox(height: 4),
                                                 Wrap(

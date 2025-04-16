@@ -39,6 +39,9 @@ class Course {
   @HiveField(10)
   final String tag;
 
+  @HiveField(11)
+  final String deliveryMode; // 'online' or 'face-to-face'
+
   Course({
     String? id,
     required this.name,
@@ -51,6 +54,7 @@ class Course {
     required this.color,
     required this.scheduleId,
     required this.tag,
+    this.deliveryMode = 'face-to-face',
   }) : id = id ?? const Uuid().v4();
 
   Map<String, dynamic> toMap() {
@@ -68,6 +72,7 @@ class Course {
       'color': color.value.toString(),
       'scheduleId': scheduleId,
       'tag': tag,
+      'deliveryMode': deliveryMode,
     };
   }
 
@@ -90,6 +95,7 @@ class Course {
       color: Color(int.parse(map['color'])),
       scheduleId: map['scheduleId'],
       tag: map['tag'],
+      deliveryMode: map['deliveryMode'] ?? 'face-to-face',
     );
   }
 

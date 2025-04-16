@@ -29,8 +29,10 @@ class _CourseModalState extends State<CourseModal> {
   late TimeOfDay endTime;
   late Set<String> selectedDays;
   late String selectedTag;
+  late String selectedDeliveryMode;
   
   final List<String> tagOptions = ['School', 'Work', 'Personal'];
+  final List<String> deliveryModeOptions = ['Face-to-Face', 'Online'];
   final List<Color> colorOptions = [
     const Color(0xFFFFE082), 
     const Color(0xFFB2FF59),
@@ -59,6 +61,7 @@ class _CourseModalState extends State<CourseModal> {
       endTime = widget.course!.endTime;
       selectedDays = Set.from(widget.course!.weekDays);
       selectedTag = widget.course!.tag;
+      selectedDeliveryMode = widget.course!.deliveryMode;
     } else {
       _titleController = TextEditingController();
       _courseTypeController = TextEditingController();
@@ -69,6 +72,7 @@ class _CourseModalState extends State<CourseModal> {
       endTime = const TimeOfDay(hour: 13, minute: 0);
       selectedDays = {'M', 'Th'};
       selectedTag = 'School';
+      selectedDeliveryMode = 'Face-to-Face';
     }
   }
 
@@ -106,6 +110,7 @@ class _CourseModalState extends State<CourseModal> {
         color: Color(int.parse('FF$selectedColor', radix: 16)),
         scheduleId: widget.scheduleId,
         tag: selectedTag,
+        deliveryMode: selectedDeliveryMode,
       );
 
       final scheduleService = Provider.of<ScheduleService>(context, listen: false);
@@ -388,6 +393,30 @@ class _CourseModalState extends State<CourseModal> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
+                    ),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: selectedDeliveryMode,
+                      decoration: InputDecoration(
+                        labelText: 'Delivery Mode',
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      items: deliveryModeOptions.map((String mode) {
+                        return DropdownMenuItem<String>(
+                          value: mode,
+                          child: Text(mode),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          setState(() {
+                            selectedDeliveryMode = newValue;
+                          });
+                        }
+                      },
                     ),
                     const SizedBox(height: 20),
                     Row(
